@@ -613,7 +613,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 		private final boolean required;
 
-		private volatile boolean cached = false;
+		private volatile boolean cached;
 
 		@Nullable
 		private volatile Object cachedFieldValue;
@@ -644,21 +644,20 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 				}
 				synchronized (this) {
 					if (!this.cached) {
+						Object cachedFieldValue = null;
 						if (value != null || this.required) {
-							this.cachedFieldValue = desc;
+							cachedFieldValue = desc;
 							registerDependentBeans(beanName, autowiredBeanNames);
 							if (autowiredBeanNames.size() == 1) {
 								String autowiredBeanName = autowiredBeanNames.iterator().next();
 								if (beanFactory.containsBean(autowiredBeanName) &&
 										beanFactory.isTypeMatch(autowiredBeanName, field.getType())) {
-									this.cachedFieldValue = new ShortcutDependencyDescriptor(
+									cachedFieldValue = new ShortcutDependencyDescriptor(
 											desc, autowiredBeanName, field.getType());
 								}
 							}
 						}
-						else {
-							this.cachedFieldValue = null;
-						}
+						this.cachedFieldValue = cachedFieldValue;
 						this.cached = true;
 					}
 				}
@@ -678,7 +677,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 		private final boolean required;
 
-		private volatile boolean cached = false;
+		private volatile boolean cached;
 
 		@Nullable
 		private volatile Object[] cachedMethodArguments;

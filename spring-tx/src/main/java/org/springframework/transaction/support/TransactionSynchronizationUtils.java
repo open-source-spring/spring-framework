@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2018 the original author or authors.
+ * Copyright 2002-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public abstract class TransactionSynchronizationUtils {
 
 
 	/**
-	 * Check whether the given resource transaction managers refers to the given
+	 * Check whether the given resource transaction manager refers to the given
 	 * (underlying) resource factory.
 	 * @see ResourceTransactionManager#getResourceFactory()
 	 * @see org.springframework.core.InfrastructureProxy#getWrappedObject()
@@ -57,9 +57,10 @@ public abstract class TransactionSynchronizationUtils {
 	/**
 	 * Unwrap the given resource handle if necessary; otherwise return
 	 * the given handle as-is.
+	 * @since 5.3.4
 	 * @see org.springframework.core.InfrastructureProxy#getWrappedObject()
 	 */
-	static Object unwrapResourceIfNecessary(Object resource) {
+	public static Object unwrapResourceIfNecessary(Object resource) {
 		Assert.notNull(resource, "Resource must not be null");
 		Object resourceRef = resource;
 		// unwrap infrastructure proxy
@@ -106,8 +107,8 @@ public abstract class TransactionSynchronizationUtils {
 			try {
 				synchronization.beforeCompletion();
 			}
-			catch (Throwable tsex) {
-				logger.error("TransactionSynchronization.beforeCompletion threw exception", tsex);
+			catch (Throwable ex) {
+				logger.debug("TransactionSynchronization.beforeCompletion threw exception", ex);
 			}
 		}
 	}
@@ -170,8 +171,8 @@ public abstract class TransactionSynchronizationUtils {
 				try {
 					synchronization.afterCompletion(completionStatus);
 				}
-				catch (Throwable tsex) {
-					logger.error("TransactionSynchronization.afterCompletion threw exception", tsex);
+				catch (Throwable ex) {
+					logger.debug("TransactionSynchronization.afterCompletion threw exception", ex);
 				}
 			}
 		}
